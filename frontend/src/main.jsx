@@ -45,7 +45,7 @@ createRoot(document.getElementById("root")).render(
           }
         />
         <Route
-          path="/signup"
+          path="/admin"
           element={
             <CheckAuth protected={false}>
               <AdminPage />
