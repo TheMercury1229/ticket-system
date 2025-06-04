@@ -1,5 +1,7 @@
-import { createAgent, gemini } from "@inngest/agent";
-const SYSTEM_PROMPT = `You are an expert AI assistant that processes technical support tickets. 
+import { createAgent, gemini } from "@inngest/agent-kit";
+
+const analyzeTicket = async (ticket) => {
+  const SYSTEM_PROMPT = `You are an expert AI assistant that processes technical support tickets. 
 
 Your job is to:
 1. Summarize the issue.
@@ -13,7 +15,7 @@ IMPORTANT:
 - The format must be a raw JSON object.
 
 Repeat: Do not wrap your output in markdown or code fences.`;
-const USER_PROMPT = `You are a ticket triage agent. Only return a strict JSON object with no extra text, headers, or markdown.
+  const USER_PROMPT = `You are a ticket triage agent. Only return a strict JSON object with no extra text, headers, or markdown.
         
 Analyze the following support ticket and provide a JSON object with:
 
@@ -37,7 +39,6 @@ Ticket information:
 
 - Title: ${ticket.title}
 - Description: ${ticket.description}`;
-const analyzeTicket = async (ticket) => {
   const agent = createAgent({
     name: "ai-ticket-triage-assistant",
     system: SYSTEM_PROMPT,
@@ -56,7 +57,7 @@ const analyzeTicket = async (ticket) => {
     const jsonString = match ? match[1] : res.trim();
     return JSON.parse(jsonString);
   } catch (e) {
-    console.log("Failed to parse JSON from AI response" + e.message);
+    console.log(`Failed to parse JSON from AI response ${e.message}`);
     return null;
   }
 };

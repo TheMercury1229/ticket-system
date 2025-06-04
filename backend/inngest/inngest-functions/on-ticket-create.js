@@ -1,4 +1,4 @@
-import { inngest } from "../inngest.js";
+import { inngest } from "../client.js";
 import User from "../../models/user.model.js";
 import Ticket from "../../models/ticket.model.js";
 import { NonRetriableError } from "inngest";
@@ -25,7 +25,7 @@ export const onTicketCreate = inngest.createFunction(
 
       //   Update the ticket
       await step.run("update-ticket-status", async () => {
-        await ticket.findByIdAndUpdate(ticket._id, {
+        await Ticket.findByIdAndUpdate(ticket._id, {
           status: "TODO",
         });
       });
@@ -36,7 +36,7 @@ export const onTicketCreate = inngest.createFunction(
         throw new NonRetriableError("AI analysis failed");
       }
       //   Analyze the ticket
-      await step.run("update-ticket-ai", async () => {
+      const relatedSkills = await step.run("update-ticket-ai", async () => {
         let skills = [];
 
         await Ticket.findByIdAndUpdate(ticket._id, {
@@ -81,17 +81,16 @@ export const onTicketCreate = inngest.createFunction(
         await sendEmail({
           to: moderator.email,
           subject: `New Ticket Assigned: ${ticket.title}`,
-          text: `Hey ${moderator.name},\nYou have been assigned a new ticket:\n\nTitle: ${ticket.title}\nDescription: ${ticket.description}\n\nPlease review it as soon as possible.\n\nThank you!\\n\nSupport Team`,
+          text: `Hey ${moderator.name},\nYou have been assigned a new ticket:\n\nTitle: ${ticket.title}\nDescription: ${ticket.description}\n\nPlease review it as soon as possible.\n\nThank you!\n\nSupport Team`,
         });
       });
 
       return {
         success: true,
-        message: "Ticket created and processed successfully",
       };
     } catch (error) {
-      console.error("Error on ticket create", error);
-      throw new NonRetriableError("Error on ticket create");
+      console.error("Error on ticket create", error.message);
+      return { success: false };
     }
   }
 );

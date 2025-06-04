@@ -5,12 +5,14 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "inngest-dev": "npx inngest-cli dev "
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "inngest-cli": "^1.6.3",
     "nodemon": "^3.1.10"
   },
   "dependencies": {

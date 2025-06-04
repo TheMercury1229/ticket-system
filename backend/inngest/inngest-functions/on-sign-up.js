@@ -1,4 +1,4 @@
-import { inngest } from "../inngest.js";
+import { inngest } from "../client.js";
 import User from "../../models/user.model.js";
 import { NonRetriableError } from "inngest";
 import { sendEmail } from "../../utils/mailer.js";
@@ -22,8 +22,9 @@ export const onUserSignUp = inngest.createFunction(
 
       //   Send an email to the user
       await step.run("send-welcome-email", async () => {
+        const subject = "Welcome to the Ticket System";
         const message = "Welcome to the Ticket System"`Hello ${user.name},\n\nThank you for signing up for our ticket system! We're excited to have you on board.\n\nBest regards,\nTicket System Team`;
-        const desc = sendEmail(user.email, message, desc);
+        const desc = sendEmail(user.email, subject, message);
       });
 
       return { success: true };
